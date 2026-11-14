@@ -1,0 +1,30 @@
+# Build directories
+/build/
+/build-*/
+/out/
+/cmake-build-*/
+
+# IDE and editor files
+.vs/
+.vscode/
+.idea/
+
+# Xcode
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Build products
+*.obj
+*.o
+*.lib
+*.a
+*.dll
+*.dylib
+*.exe
+*.app/
+*.ipa
+
+# OS files
+.DS_Store
+Thumbs.db
