@@ -1,0 +1,45 @@
+name: iOS Toolchain CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios-library:
+    name: Build iOS arm64 engine library
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Apple toolchain
+        run: |
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+
+      - name: Configure iOS
+        run: |
+          cmake -S . -B build-ios -G Xcode \
+            -DCMAKE_SYSTEM_NAME=iOS \
+            -DCMAKE_OSX_SYSROOT=iphoneos \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=15.0 \
+            -DTESTENGINE_BUILD_TESTS=OFF
+
+      - name: Build iOS static library
+        run: cmake --build build-ios --config Release --target TestEngine --parallel
+
+      - name: Upload iOS library
+        uses: actions/upload-artifact@v4
+        with:
+          name: testengine-ios-arm64-library
+          path: build-ios/Release-iphoneos/libTestEngine.a
+          if-no-files-found: error
+          retention-days: 14
